@@ -6,32 +6,34 @@
 // See ./week2_algorithmic_warmup.pdf for details
 
 #include <iostream>
+#include <vector>
 
 int main(void) {
+    std::vector<int> pisano;
     long long n, m;
+    int sum = 0;
 
     std::cin >> m >> n;
 
-    // sum of all n fibonacci mod 10 = sum of each mod 10 fib
-    // = sum of all digits of a mod10 pisano period
-    // len(pisano period of 10) = 60
-    int pisano[60];
-    int sum = 0;
-    pisano[0] = 0;
-    pisano[1] = 1;
+    // Pisano period always starts with 0 1
+    pisano.push_back(0);
+    pisano.push_back(1);
 
-    // calculate and store the pisano period
-    for (int i = 2; i < 60; i++) {
-        pisano[i] = (pisano[i - 2] + pisano[i - 1]) % 10;
-    }
+    // only save one Pisano period
+    long long i = 2;
+    do {
+        pisano.push_back((pisano[i - 2] + pisano[i - 1]) % 10);
+        i++;
+    } while ((pisano[i - 2] != 0) || (pisano[i - 1] != 1));
 
-    // calculate the sum
-    for (int i = m; i < (n + 1) % 60; i++) {
-        sum = (sum + pisano[i]) % 10;
-    }
+    // remove the extra two 0 and 1 that are used to check the period
+    pisano.erase(pisano.end() - 2, pisano.end());
 
+    // get the last digit of the partial sum of the last digits of fib numbers
+    for (int i = m % 60; i <= n % 60; i++) sum = (sum + pisano[i]) % 10;
+
+    // print the result
     std::cout << sum << std::endl;
-
 
     return 0;
 }
