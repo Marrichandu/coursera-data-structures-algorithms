@@ -27,7 +27,9 @@ ALL = \
 		week3_fractional_knapsack \
 		week3_largest_number
 
+
 all: $(ALL)
+
 
 week1_a_plus_b: $(WEEK1_DIR)/a_plus_b.cpp
 	$(CXX) $(CXXFLAGS) $? -o $@
@@ -62,6 +64,9 @@ week3_change: $(WEEK3_DIR)/change.cpp
 	$(CXX) $(CXXFLAGS) $? -o $@
 
 week3_covering_segments: $(WEEK3_DIR)/covering_segments.cpp
+	$(CXX) $(CXXFLAGS) $? -o $@
+
+week3_different_summands: $(WEEK3_DIR)/different_summands.cpp
 	$(CXX) $(CXXFLAGS) $? -o $@
 
 week3_dot_product: $(WEEK3_DIR)/dot_product.cpp
