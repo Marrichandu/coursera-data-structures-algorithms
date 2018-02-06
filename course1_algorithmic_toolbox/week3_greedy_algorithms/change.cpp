@@ -11,11 +11,11 @@ int main(void) {
     int m;
 
     std::cin >> m;
-    
+
     const int NUM_DENOMINATIONS = 3;
     int remain = m, i = 0, num_coins = 0;
     int denomination[NUM_DENOMINATIONS] = { 10, 5, 1 };
-    
+
     for (int i = 0; i < NUM_DENOMINATIONS; i++) {
         num_coins += remain / denomination[i];
         remain %= denomination[i];
