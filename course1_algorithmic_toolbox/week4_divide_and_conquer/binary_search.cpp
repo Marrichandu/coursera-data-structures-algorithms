@@ -5,6 +5,7 @@
 // Algorithmic Toolbox - Week 4 - Divide-and-Conquer Algorithms
 // See ./week4_divide_and_conquer.pdf for details
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
@@ -18,13 +19,45 @@ int main(void) {
     std::vector<int> a(n);
     for (int i = 0; i < n; i++) std::cin >> a[i];
 
+    typedef struct intindex {
+        int value;
+        int index;  // original index before sorting
+
+        // enables sorting by value
+        bool operator<(const intindex& rhs) { return value < rhs.value; }
+    } intindex;
+
     std::cin >> k;
-    std::vector<int> b(k);
-    for (int i = 0; i < k; i++) std::cin >> b[i];
+    std::vector<intindex> b(k);
+    for (int i = 0; i < k; i++) {
+        std::cin >> b[i].value;
+        b[i].index = i;
+    }
+
+    // sort b ascending for later use
+    std::sort(b.begin(), b.end());
+
+    std::vector<int> indexlist(k);
 
     // search for each element of b in a
-    for (auto& num : b) std::cout << BinarySearch(a, num) << " ";
+    for (int i = 0; i < b.size(); i++) {
+        // yield -1 immediately if the value is out of a's bound
+        if ((b[i].value < a.front()) || (b[i].value > a.back())) {
+            indexlist[b[i].index] = -1;
+        } else {
+            // only do binary search if the element in b has not been searched yet
+            if ((i == 0) || (b[i].value != b[i - 1].value)) {
+                indexlist[b[i].index] = BinarySearch(a, b[i].value);
+            }
+            // otherwise, copy the result from the previous search
+            else {
+                indexlist[b[i].index] = indexlist[b[i - 1].index];
+            }
+        }
+    }
 
+    // output result
+    for (auto& index : indexlist) std::cout << index << " ";
     std::cout << std::endl;
 
     return 0;
