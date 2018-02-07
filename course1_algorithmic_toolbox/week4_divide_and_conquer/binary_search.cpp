@@ -1,88 +1,53 @@
-// File: binary_search.cpp
+// File: BinarySearch.cpp
 // Author: Phi Luu
 // Created: February 05, 2018
 //
-// Algorithmic Toolbox - Week 4 - Divide-and-Conquer Algorithms
+// Algorithmic Toolbox - Week 04 - Divide-and-Conquer Algorithms
 // See ./week4_divide_and_conquer.pdf for details
 
-#include <algorithm>
 #include <iostream>
 #include <vector>
 
-int BinarySearch(std::vector<int> array, int value);
+int BinarySearch(const std::vector<int>& array, int value);
 
 int main(void) {
     int n, k;
 
     std::cin >> n;
-
     std::vector<int> a(n);
-    for (int i = 0; i < n; i++) std::cin >> a[i];
-
-    typedef struct intindex {
-        int value;
-        int index;  // original index before sorting
-
-        // enables sorting by value
-        bool operator<(const intindex& rhs) { return value < rhs.value; }
-    } intindex;
+    for (size_t i = 0; i < a.size(); i++) std::cin >> a[i];
 
     std::cin >> k;
-    std::vector<intindex> b(k);
-    for (int i = 0; i < k; i++) {
-        std::cin >> b[i].value;
-        b[i].index = i;
-    }
+    std::vector<int> b(k);
+    for (int i = 0; i < k; i++) std::cin >> b[i];
 
-    // sort b ascending for later use
-    std::sort(b.begin(), b.end());
+    // for each element in b, output the index of b[i] in a
+    for (int i = 0; i < k; i++) std::cout << BinarySearch(a, b[i]) << " ";
 
-    std::vector<int> indexlist(k);
-
-    // search for each element of b in a
-    for (int i = 0; i < b.size(); i++) {
-        // yield -1 immediately if the value is out of a's bound
-        if ((b[i].value < a.front()) || (b[i].value > a.back())) {
-            indexlist[b[i].index] = -1;
-        } else {
-            // only do binary search if the element in b has not been searched yet
-            if ((i == 0) || (b[i].value != b[i - 1].value)) {
-                indexlist[b[i].index] = BinarySearch(a, b[i].value);
-            }
-            // otherwise, copy the result from the previous search
-            else {
-                indexlist[b[i].index] = indexlist[b[i - 1].index];
-            }
-        }
-    }
-
-    // output result
-    for (auto& index : indexlist) std::cout << index << " ";
     std::cout << std::endl;
 
     return 0;
 }
 
-// Searches for an element in an array and returns the index of that element if
-// found or returns -1 if not found.
-int BinarySearch(std::vector<int> array, int value) {
-    int low = 0, high = array.size();
-    int position = -1;  // always assume that the element is not in the array
+// Searches for an element with the given value in an array.
+// Returns the index of that element or returns if there is no such element.
+int BinarySearch(const std::vector<int>& array, int value) {
+    int left = 0, right = (int)array.size();
 
-    while (low < high) {
-        int mid = (low + high) / 2;
+    // only do the search if the value is within the range of min and max
+    if ((value >= array[left]) && (value <= array[right - 1])) {
+        while (left < right) {
+            int mid = (left + right) / 2;
 
-        if (array[mid] == value) {
-            position = mid;
-            break;
-        } else if (array[mid] > value) {
-            // search left half of the array
-            high = mid;
-        } else {
-            // search right half of the array
-            low = mid + 1;
+            if (array[mid] == value) {
+                return mid;  // return the index and exit if found
+            } else if (array[mid] > value) {
+                right = mid;  // search left half if the value > array[midpoint]
+            } else {
+                left = mid + 1;  // search right half
+            }
         }
     }
 
-    return position;
+    return -1;
 }
