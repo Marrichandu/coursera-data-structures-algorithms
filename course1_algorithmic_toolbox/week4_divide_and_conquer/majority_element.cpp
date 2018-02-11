@@ -9,8 +9,8 @@
 #include <iostream>
 #include <vector>
 
+int CheckMajorityElementSorted(std::vector<int>& v);
 int CheckMajorityElement(std::vector<int>& v);
-int CheckMajorityElementRecur(std::vector<int>& v);
 
 int main(void) {
     int n;
@@ -20,16 +20,12 @@ int main(void) {
     std::vector<int> a(n);
     for (int i = 0; i < n; i++) std::cin >> a[i];
 
-    if (CheckMajorityElementRecur(a) != -1) {
-        std::cout << 1 << std::endl;
-    } else {
-        std::cout << 0 << std::endl;
-    }
+    std::cout << CheckMajorityElementSorted(a) << std::endl;
 
     return 0;
 }
 
-int CheckMajorityElementRecur(std::vector<int>& v) {
+int CheckMajorityElement(std::vector<int>& v) {
     int n = v.size();
 
     // compare two elements if the size is 2
@@ -55,8 +51,8 @@ int CheckMajorityElementRecur(std::vector<int>& v) {
     std::vector<int> lowerhalf(v.begin(), v.begin() + n / 2);
     std::vector<int> upperhalf(v.begin() + n / 2, v.end());
 
-    int major_lower = CheckMajorityElementRecur(lowerhalf);
-    int major_upper = CheckMajorityElementRecur(upperhalf);
+    int major_lower = CheckMajorityElement(lowerhalf);
+    int major_upper = CheckMajorityElement(upperhalf);
 
     // if lower doesn't have a majority but upper does, then major_upper = major
     if ((major_lower == -1) && (major_upper != -1)) {
@@ -80,7 +76,7 @@ int CheckMajorityElementRecur(std::vector<int>& v) {
 
 // Returns 1 if there is an element that occurs more than n / 2 times in an
 // array of size n. Returns 0 otherwise.
-int CheckMajorityElement(std::vector<int>& v) {
+int CheckMajorityElementSorted(std::vector<int>& v) {
     // this is a sneaky move. Sorting the array makes repeating elements continuous
     std::sort(v.begin(), v.end());
 
