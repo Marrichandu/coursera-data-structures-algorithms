@@ -71,7 +71,6 @@ int CheckMajorityElement(std::vector<int>& v) {
     else {
         return -1;
     }
-
 }
 
 // Returns 1 if there is an element that occurs more than n / 2 times in an

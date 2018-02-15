@@ -10,8 +10,6 @@
 #include <iostream>
 #include <vector>
 
-char c;
-
 void Partition(std::vector<int>& array, int low, int high, int& i, int& j);
 void QuickSort(std::vector<int>& array, int low, int high);
 void QuickSort(std::vector<int>& array);
@@ -98,6 +96,7 @@ void QuickSort(std::vector<int>& array) { QuickSort(array, 0, array.size()); }
 
 void Swap(int* a, int* b) {
     int temp = *a;
+
     *a = *b;
     *b = temp;
 }
