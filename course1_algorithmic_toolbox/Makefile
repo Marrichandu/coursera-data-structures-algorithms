@@ -25,7 +25,13 @@ ALL = \
 		week3_different_summands \
 		week3_dot_product \
 		week3_fractional_knapsack \
-		week3_largest_number
+		week3_largest_number \
+		week4_binary_search \
+		week4_closest \
+		week4_inversions \
+		week4_majority_element \
+		week4_points_and_segments \
+		week4_sorting
 
 
 all: $(ALL)
@@ -76,6 +82,25 @@ week3_fractional_knapsack: $(WEEK3_DIR)/fractional_knapsack.cpp
 	$(CXX) $(CXXFLAGS) $? -o $@
 
 week3_largest_number: $(WEEK3_DIR)/largest_number.cpp
+	$(CXX) $(CXXFLAGS) $? -o $@
+
+
+week4_binary_search: $(WEEK4_DIR)/binary_search.cpp
+	$(CXX) $(CXXFLAGS) $? -o $@
+
+week4_closest: $(WEEK4_DIR)/closest.cpp
+	$(CXX) $(CXXFLAGS) $? -o $@
+
+week4_inversions: $(WEEK4_DIR)/inversions.cpp
+	$(CXX) $(CXXFLAGS) $? -o $@
+
+week4_majority_element: $(WEEK4_DIR)/majority_element.cpp
+	$(CXX) $(CXXFLAGS) $? -o $@
+
+week4_points_and_segments: $(WEEK4_DIR)/points_and_segments.cpp
+	$(CXX) $(CXXFLAGS) $? -o $@
+
+week4_sorting: $(WEEK4_DIR)/sorting.cpp
 	$(CXX) $(CXXFLAGS) $? -o $@
 
 
