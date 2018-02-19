@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+#include <random>
 
 typedef struct seg {
     int a;
@@ -20,9 +21,65 @@ struct rightascending {
     bool operator()(const seg& x, const seg& y) const { return x.b < y.b; }
 };
 
-int PrintSegmentsContain(int point, std::vector<seg>& segment);
+int SegmentsContainPoint(int point, std::vector<seg>& segment);
+
+int Naive(int point, std::vector<seg>& segment) {
+    int total = 0;
+
+    for (auto& segm : segment) {
+        if ((point >= segm.a) && (point <= segm.b)) total++;
+    }
+
+    return total;
+}
 
 int main(void) {
+    // std::random_device rd;
+    // std::uniform_int_distribution<int> sprange(1, 50000), abxrange(-100000000,
+    //                                                                100000000);
+    // bool failed = false;
+    // while (!failed) {
+    //     int s = sprange(rd), p = sprange(rd);
+    //     std::vector<seg> segment(s);
+    //     for (int i = 0; i < s; i++) {
+    //         segment[i].a = abxrange(rd);
+    //         segment[i].b = abxrange(rd);
+    //     }
+    //     int x[p];
+    //     for (int i = 0; i < p; i++) {
+    //         x[i] = abxrange(rd);
+    //     }
+
+    //     std::cout << "s = " << s << "  p = " << p << std::endl;
+    //     if (s < 7) {
+    //         for (int i = 0; i < s; i++) {
+    //             std::cout << segment[i].a << " " << segment[i].b << std::endl;
+    //         }
+    //     } else {
+    //         for (int i = 0; i < 7; i++) {
+    //             std::cout << segment[i].a << " " << segment[i].b << std::endl;
+    //         }
+    //         std::cout << "..." << std::endl;
+    //     }
+
+    //     for (int i = 0; i < p; i++) {
+    //         int naive = Naive(x[i], segment);
+    //         int self = SegmentsContainPoint(x[i], segment);
+
+    //         if (naive == self) {
+    //             std::cout << "    PASSED" << std::endl;
+    //             std::cout << "        naive = " << naive << std::endl;
+    //             std::cout << "        self  = " << self << std::endl;
+    //         } else {
+    //             std::cout << "    FAILED" << std::endl;
+    //             std::cout << "        naive = " << naive << std::endl;
+    //             std::cout << "        self  = " << self << std::endl;
+    //             failed = true;
+    //             break;
+    //         }
+    //     }
+    // }
+    // return 0;
     int s, p;
 
     std::cin >> s >> p;
@@ -34,32 +91,14 @@ int main(void) {
     for (int i = 0; i < p; i++) std::cin >> x[i];
 
     for (int i = 0; i < p; i++) {
-        std::cout << PrintSegmentsContain(x[i], segment) << ' ';
+        std::cout << SegmentsContainPoint(x[i], segment) << ' ';
     }
     std::cout << std::endl;
 
     return 0;
 }
 
-int PrintSegmentsContain(int point, std::vector<seg>& segment) {
-    // std::sort(segment.begin(), segment.end(), leftascending());
-
-    // while (point < segment.back().a) {
-    //     segment.pop_back();
-    //     if (segment.empty()) return 0;
-    // }
-
-
-    // std::sort(segment.rbegin(), segment.rend(), rightascending());
-
-    // while (point > segment.back().b) {
-    //     segment.pop_back();
-    //     if (segment.empty()) return 0;
-    // }
-
-    // return segment.size();
-
-    // check the left-ends
+int SegmentsContainPoint(int point, std::vector<seg>& segment) {
     std::sort(segment.begin(), segment.end(), leftascending());
 
     // if the point is less than the lowest left-end then there is zero segment
@@ -75,7 +114,15 @@ int PrintSegmentsContain(int point, std::vector<seg>& segment) {
             int mid = (low + high) / 2;
 
             if (point >= segment[mid].a) {
-                if (found) break;
+                if (found) {
+                    for (int i = mid; i <= right; i++) {
+                        if ((i < right) && (point < segment[i].a)) {
+                            right = i;
+                            break;
+                        }
+                    }
+                    break;
+                }
                 low = mid + 1;
             } else {
                 right = mid;
@@ -101,7 +148,12 @@ int PrintSegmentsContain(int point, std::vector<seg>& segment) {
             int mid = (low + high) / 2;
 
             if (point <= segment[mid].b) {
-                if (found) break;
+                if (found) {
+                    for (int i = left; i <= mid; i++) {
+                        if ((i < mid) && (point > segment[i].b)) left = i + 1;
+                    }
+                    break;
+                }
                 high = mid;
             } else {
                 left = mid + 1;
