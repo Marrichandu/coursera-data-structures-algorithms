@@ -1,6 +1,4 @@
-CC = gcc
 CXX = g++
-CFLAGS = -pipe -O2 -std=c11 -lm
 CXXFLAGS = -pipe -O2 -std=c++0x -lm
 
 WEEK1_DIR = week1_programming_challenges
