@@ -18,7 +18,9 @@ typedef struct pt {
     bool operator<(const pt& rhs) { return x <= rhs.x; }
 } pt;
 struct sorty {
-    bool operator()(const pt& lhs, const pt& rhs) { return lhs.y <= rhs.y; }
+    bool operator()(const pt& lhs, const pt& rhs) {
+        return lhs.y <= rhs.y;
+    }
 };
 
 double MinDistance(const std::vector<pt>& points);
@@ -95,6 +97,24 @@ double MinDistance(const std::vector<pt>& points) {
         }
         midhigh = high;
     }
+
+    // if there are no points in the middle strip, return the min of two halves
+    if (midlow >= midhigh) return minhalves;
+
+    std::vector<pt> midstrip(points.begin() + midlow, points.begin() + midhigh);
+    // sort the middle strip by y-coordinates in non-descending order
+    std::sort(midstrip.begin(), midstrip.end(), sorty());
+
+    // find the min distance in the middle strip
+    double minmiddle = minhalves;
+    for (int i = midlow; i < mid; i++) {
+        for (int j = mid; (j <= i + 7) && (j < midhigh); j++) {
+            double dij = Distance(points[i], points[j]);
+            if (dij < minmiddle) minmiddle = dij;
+        }
+    }
+
+    return std::min(minhalves, minmiddle);
 }
 
 double Min(const pt& p1, const pt& p2, const pt& p3) {
