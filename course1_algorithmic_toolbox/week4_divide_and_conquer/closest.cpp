@@ -17,6 +17,9 @@ typedef struct pt {
 
     bool operator<(const pt& rhs) { return x <= rhs.x; }
 } pt;
+struct sorty {
+    bool operator()(const pt& lhs, const pt& rhs) { return lhs.y <= rhs.y; }
+};
 
 double MinDistance(const std::vector<pt>& points);
 double Min(const pt& p1, const pt& p2, const pt& p3);
@@ -48,24 +51,58 @@ double MinDistance(const std::vector<pt>& points) {
 
     // split the array in two halves
     int mid = points.size() / 2;
-    std::vector<pt> leftpoints(points.begin(), points.begin() + mid);
-    std::vector<pt> rightpoints(points.begin() + mid, points.end());
 
-    // the minimum distance of the entire array is the min of the two halves
-    return std::min(MinDistance(leftpoints), MinDistance(rightpoints));
+    // find the minimum distance inside the left half
+    std::vector<pt> lefthalf(points.begin(), points.begin() + mid);
+    double minleft = MinDistance(lefthalf);
+
+    // find the minimum distance inside the right half
+    std::vector<pt> righthalf(points.begin() + mid, points.end());
+    double minright = MinDistance(righthalf);
+
+    double minhalves = std::min(minleft, minright);
+    double midx = (double)(points[mid - 1].x + points[mid].x) / 2.0;
+
+    // mark the points that are within (minhalves / 2) from midx
+    int midlow = 0, midhigh = points.size();
+
+    // find the furthest point to the left of midx
+    if (points.front().x < midx - minhalves) {
+        int low = 0, high = mid;
+        while (low < high) {
+            int med = (low + high) / 2;
+
+            if (points[med].x >= midx - minhalves) {
+                high = med;
+            } else {
+                low = med + 1;
+            }
+        }
+        midlow = low;
+    }
+
+    // find the furthest point to the right of midx
+    if (points.back().x > midx + minhalves) {
+        int low = mid, high = points.size();
+        while (low < high) {
+            int med = (low + high) / 2;
+
+            if (points[med].x <= midx + minhalves) {
+                low = med + 1;
+            } else {
+                high = med;
+            }
+        }
+        midhigh = high;
+    }
 }
 
 double Min(const pt& p1, const pt& p2, const pt& p3) {
-    const double EPSILON = 0.00001;
     double d12 = Distance(p1, p2);
     double d13 = Distance(p1, p3);
     double d23 = Distance(p2, p3);
-    double min = d12;
 
-    if (d13 - min < 0) min = d13;
-    if (d23 - min < 0) min = d23;
-
-    return min;
+    return std::min(std::min(d12, d13), d23);
 }
 
 double Distance(const pt& p1, const pt& p2) {
