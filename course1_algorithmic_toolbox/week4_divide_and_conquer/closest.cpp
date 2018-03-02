@@ -9,13 +9,19 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
-#include <vector>
 
 typedef struct pt {
     int x;
     int y;
 
     bool operator<(const pt& rhs) { return x <= rhs.x; }
+
+    pt& operator=(const pt& rhs) {
+        x = rhs.x;
+        y = rhs.y;
+
+        return *this;
+    }
 } pt;
 struct sorty {
     bool operator()(const pt& lhs, const pt& rhs) {
@@ -23,7 +29,8 @@ struct sorty {
     }
 };
 
-double MinDistance(const std::vector<pt>& points);
+double MinDistance(pt* points, int low, int high);
+double MinDistance(pt* points, int size);
 double Min(const pt& p1, const pt& p2, const pt& p3);
 double Distance(const pt& p1, const pt& p2);
 
@@ -32,89 +39,96 @@ int main(void) {
 
     std::cin >> n;
 
-    std::vector<pt> points(n);
+    pt points[n];
     for (int i = 0; i < n; i++) std::cin >> points[i].x >> points[i].y;
 
     // sort the points by x-coordinates in non-descending order
-    std::sort(points.begin(), points.end());
+    std::sort(points, points + n);
 
     std::cout << std::fixed;
-    std::cout << std::setprecision(4) << MinDistance(points) << std::endl;
+    std::cout << std::setprecision(4) << MinDistance(points, n) << std::endl;
 
     return 0;
 }
 
-double MinDistance(const std::vector<pt>& points) {
+double MinDistance(pt* points, int low, int high) {
     // if there are three points, find the minimum distance manually
-    if (points.size() == 3) return Min(points[0], points[1], points[2]);
+    if (high - low == 3) {
+        return Min(points[low], points[low + 1], points[low + 2]);
+    }
 
     // if there are two points, the minimum distance is their distance
-    if (points.size() == 2) return Distance(points[0], points[1]);
+    if (high - low == 2) return Distance(points[low], points[low + 1]);
 
     // split the array in two halves
-    int mid = points.size() / 2;
+    int mid = (low + high) / 2;
 
     // find the minimum distance inside the left half
-    std::vector<pt> lefthalf(points.begin(), points.begin() + mid);
-    double minleft = MinDistance(lefthalf);
+    double minleft = MinDistance(points, low, mid);
 
     // find the minimum distance inside the right half
-    std::vector<pt> righthalf(points.begin() + mid, points.end());
-    double minright = MinDistance(righthalf);
+    double minright = MinDistance(points, mid, high);
 
     double minhalves = std::min(minleft, minright);
     double midx = (double)(points[mid - 1].x + points[mid].x) / 2.0;
 
     // mark the points that are within (minhalves / 2) from midx
-    int midlow = 0, midhigh = points.size();
+    int midlow = low, midhigh = high;
 
     // find the furthest point to the left of midx
-    if (points.front().x < midx - minhalves) {
-        int low = 0, high = mid;
-        while (low < high) {
-            int med = (low + high) / 2;
+    if (points[midlow].x < midx - minhalves) {
+        int ihigh = mid;
+        while (midlow < ihigh) {
+            int imid = (midlow + ihigh) / 2;
 
-            if (points[med].x >= midx - minhalves) {
-                high = med;
+            if (points[imid].x >= midx - minhalves) {
+                ihigh = imid;
             } else {
-                low = med + 1;
+                midlow = imid + 1;
             }
         }
-        midlow = low;
     }
 
     // find the furthest point to the right of midx
-    if (points.back().x > midx + minhalves) {
-        int low = mid, high = points.size();
-        while (low < high) {
-            int med = (low + high) / 2;
+    if (points[midhigh - 1].x > midx + minhalves) {
+        int ilow = mid;
+        while (ilow < midhigh) {
+            int imid = (ilow + midhigh) / 2;
 
-            if (points[med].x <= midx + minhalves) {
-                low = med + 1;
+            if (points[imid].x <= midx + minhalves) {
+                ilow = imid + 1;
             } else {
-                high = med;
+                midhigh = imid;
             }
         }
-        midhigh = high;
     }
 
     // if there are no points in the middle strip, return the min of two halves
     if (midlow >= midhigh) return minhalves;
 
-    std::vector<pt> midstrip(points.begin() + midlow, points.begin() + midhigh);
+    pt midstrip[midhigh - midlow];
+    int midsize = 0;
+
+    for (int i = midlow; i < midhigh; i++) midstrip[midsize++] = points[i];
+
     // sort the middle strip by y-coordinates in non-descending order
-    std::sort(midstrip.begin(), midstrip.end(), sorty());
+    std::sort(midstrip, midstrip + mid - midlow, sorty());
+    std::sort(midstrip + mid - midlow, midstrip + midsize, sorty());
 
     // find the min distance in the middle strip
-    double minmiddle = minhalves;
-    for (int i = midlow; i < mid; i++) {
-        for (int j = mid; (j <= i + 7) && (j < midhigh); j++) {
-            double dij = Distance(points[i], points[j]);
-            if (dij < minmiddle) minmiddle = dij;
+    double themin = minhalves;
+    for (int i = 0; i < mid - midlow; i++) {
+        for (int j = mid - midlow; j < midsize; j++) {
+            double dij = Distance(midstrip[i], midstrip[j]);
+            if (dij < themin) themin = dij;
         }
     }
 
-    return std::min(minhalves, minmiddle);
+    return themin;
+}
+
+double MinDistance(pt* points, int size) {
+    return MinDistance(points, 0, size);
 }
 
 double Min(const pt& p1, const pt& p2, const pt& p3) {
