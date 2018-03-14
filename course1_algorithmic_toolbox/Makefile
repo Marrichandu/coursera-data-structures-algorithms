@@ -30,7 +30,12 @@ ALL = \
 		week4_inversions \
 		week4_majority_element \
 		week4_points_and_segments \
-		week4_sorting
+		week4_sorting \
+		week5_change_dp \
+		week5_edit_distance \
+		week5_lcs2 \
+		week5_lcs3 \
+		week5_primitive_calculator
 
 
 all: init $(ALL)
@@ -103,6 +108,22 @@ week4_points_and_segments: $(WEEK4_DIR)/points_and_segments.cpp
 	$(CXX) $(CXXFLAGS) $? -o $(OUT_DIR)/$@
 
 week4_sorting: $(WEEK4_DIR)/sorting.cpp
+	$(CXX) $(CXXFLAGS) $? -o $(OUT_DIR)/$@
+
+
+week5_change_dp: $(WEEK5_DIR)/change_dp.cpp
+	$(CXX) $(CXXFLAGS) $? -o $(OUT_DIR)/$@
+
+week5_edit_distance: $(WEEK5_DIR)/edit_distance.cpp
+	$(CXX) $(CXXFLAGS) $? -o $(OUT_DIR)/$@
+
+week5_lcs2: $(WEEK5_DIR)/lcs2.cpp
+	$(CXX) $(CXXFLAGS) $? -o $(OUT_DIR)/$@
+
+week5_lcs3: $(WEEK5_DIR)/lcs3.cpp
+	$(CXX) $(CXXFLAGS) $? -o $(OUT_DIR)/$@
+
+week5_primitive_calculator: $(WEEK5_DIR)/primitive_calculator.cpp
 	$(CXX) $(CXXFLAGS) $? -o $(OUT_DIR)/$@
 
 
