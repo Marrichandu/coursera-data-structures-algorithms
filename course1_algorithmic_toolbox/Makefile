@@ -39,6 +39,7 @@ ALL = \
 
 
 all: init $(ALL)
+	chmod 755 $(OUT_DIR) $(OUT_DIR)/*
 
 init:
 	mkdir -p $(OUT_DIR)
